@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
@@ -24,10 +25,18 @@ public class UserModel {
 
   private UUID id;
 
+  // A anottation @Column é usada para definir as propriedades da coluna no banco
+  // de dados, no caso da coluna "email" e "userName" são únicas e não podem ser
+  // nulas
+  // O atributo "nullable" indica se a coluna pode ser nula ou não
+
   // Atributos do usuario
   private String name;
+  @Column(unique = true, nullable = false)
   private String email;
   private String password;
+  @Column(unique = true)
+  private String userName;
 
   // Anotação para indicar que esse campo será preenchido automaticamente com a
   // data e hora de criação
