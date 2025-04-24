@@ -29,6 +29,8 @@ public class UserModel {
   private String email;
   private String password;
 
+  // Anotação para indicar que esse campo será preenchido automaticamente com a
+  // data e hora de criação
   @CreationTimestamp
   private LocalDateTime createdAt;
 

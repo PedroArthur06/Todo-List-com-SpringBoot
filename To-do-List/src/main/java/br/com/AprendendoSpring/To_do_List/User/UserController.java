@@ -1,6 +1,7 @@
 package br.com.AprendendoSpring.To_do_List.User;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,12 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/users")
 public class UserController {
 
-  @PostMapping("/")
-  public void create(@RequestBody UserModel userModel) {
+  // Injeção de dependência do repositório de usuários
+  @Autowired
+  private UserRepository userRepository;
 
-    System.out.println("Usuário criado: " + userModel.getName());
-    System.out.println("Email: " + userModel.getEmail());
-    System.out.println("Senha: " + userModel.getPassword());
+  @PostMapping("/")
+  public UserModel create(@RequestBody UserModel userModel) {
+
+    var userCreated = this.userRepository.save(userModel);
+    return userCreated;
 
   }
 
