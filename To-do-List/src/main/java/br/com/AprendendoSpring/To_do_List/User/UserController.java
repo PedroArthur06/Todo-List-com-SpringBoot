@@ -17,6 +17,16 @@ public class UserController {
   @PostMapping("/")
   public UserModel create(@RequestBody UserModel userModel) {
 
+    var users = this.userRepository.findByEmail(userModel.getEmail());
+    var user = this.userRepository.findByUserName(userModel.getUserName());
+
+    if (users != null) {
+      throw new RuntimeException("Email já cadastrado!");
+    }
+    if (user != null) {
+      throw new RuntimeException("Nome de usuário já cadastrado!");
+    }
+
     var userCreated = this.userRepository.save(userModel);
     return userCreated;
 
