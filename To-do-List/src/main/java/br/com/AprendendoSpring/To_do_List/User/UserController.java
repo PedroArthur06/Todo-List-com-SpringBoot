@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import br.com.AprendendoSpring.To_do_List.User.UserModel;
-import br.com.AprendendoSpring.To_do_List.User.UserRepository;
 
 @RestController
 @RequestMapping("/users")
@@ -30,6 +28,7 @@ public class UserController {
       return ResponseEntity.badRequest().body("Email já cadastrado!");
     }
 
+    // Criptografando a senha do usuario
     var passwordHashed = BCrypt.withDefaults().hashToString(12, userModel.getPassword().toCharArray());
 
     userModel.setPassword(passwordHashed);
