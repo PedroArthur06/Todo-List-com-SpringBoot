@@ -1,12 +1,16 @@
 package br.com.AprendendoSpring.To_do_List.User;
 
 import org.springframework.web.bind.annotation.RestController;
+
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import br.com.AprendendoSpring.To_do_List.User.UserModel;
+import br.com.AprendendoSpring.To_do_List.User.UserRepository;
 
 @RestController
 @RequestMapping("/users")
@@ -25,6 +29,10 @@ public class UserController {
       System.out.println("Email já cadastrado!");
       return ResponseEntity.badRequest().body("Email já cadastrado!");
     }
+
+    var passwordHashed = BCrypt.withDefaults().hashToString(12, userModel.getPassword().toCharArray());
+
+    userModel.setPassword(passwordHashed);
 
     var userCreated = this.userRepository.save(userModel);
     return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
