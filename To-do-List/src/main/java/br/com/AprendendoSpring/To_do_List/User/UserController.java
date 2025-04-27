@@ -2,6 +2,8 @@ package br.com.AprendendoSpring.To_do_List.User;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,20 +17,17 @@ public class UserController {
   private UserRepository userRepository;
 
   @PostMapping("/")
-  public UserModel create(@RequestBody UserModel userModel) {
+  public ResponseEntity create(@RequestBody UserModel userModel) {
 
     var users = this.userRepository.findByEmail(userModel.getEmail());
-    var user = this.userRepository.findByUserName(userModel.getUserName());
 
     if (users != null) {
-      throw new RuntimeException("Email já cadastrado!");
-    }
-    if (user != null) {
-      throw new RuntimeException("Nome de usuário já cadastrado!");
+      System.out.println("Email já cadastrado!");
+      return ResponseEntity.badRequest().body("Email já cadastrado!");
     }
 
     var userCreated = this.userRepository.save(userModel);
-    return userCreated;
+    return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
 
   }
 
