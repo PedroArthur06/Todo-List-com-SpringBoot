@@ -23,36 +23,43 @@ public class FilterTaskAuth extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterchain)
       throws IOException, ServletException {
 
-    // pegar a autenticação (usuario,senha)
-    var authorization = request.getHeader("Authorization");
+    var Servletpath = request.getServletPath();
 
-    var authEncoded = authorization.substring("Basic ".length()).trim();
+    if (Servletpath.equals("/tasks/")) {
+      filterchain.doFilter(request, response);
 
-    byte[] authDecoded = Base64.getDecoder().decode(authEncoded);
+      // pegar a autenticação (usuario,senha)
+      var authorization = request.getHeader("Authorization");
 
-    var authString = new String(authDecoded);
+      var authEncoded = authorization.substring("Basic ".length()).trim();
 
-    String[] credentials = authString.split(":");
-    String username = credentials[0];
-    String password = credentials[1];
-    System.out.println("Username: " + username);
-    System.out.println("Password: " + password);
+      byte[] authDecoded = Base64.getDecoder().decode(authEncoded);
 
-    // validar usuario
-    var user = this.userRepository.findByUserName(username);
-    if (user == null) {
-      response.sendError(401, "Usuario não encontrado!");
-    } else {
-      // validar senha
-      var passwordValid = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
-      if (passwordValid.verified) {
-        filterchain.doFilter(request, response);
+      var authString = new String(authDecoded);
+
+      String[] credentials = authString.split(":");
+      String username = credentials[0];
+      String password = credentials[1];
+      System.out.println("Username: " + username);
+      System.out.println("Password: " + password);
+
+      // validar usuario
+      var user = this.userRepository.findByUserName(username);
+      if (user == null) {
+        response.sendError(401, "Usuario não encontrado!");
       } else {
-        response.sendError(401, "Senha inválida!");
+        // validar senha
+        var passwordValid = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
+        if (passwordValid.verified) {
+          filterchain.doFilter(request, response);
+        } else {
+          response.sendError(401, "Senha inválida!");
+        }
       }
-    }
 
-    filterchain.doFilter(request, response);
+    } else {
+      filterchain.doFilter(request, response);
+    }
 
   }
 }
